@@ -1,16 +1,14 @@
-using Microsoft.Win32;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Resources;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
-
 namespace Nightwrap
 {
     internal static class Program
     {
         public const string NAME = "Nightwrap";
         public const string ICON_NAME = "Black-dress.ico";
+        public static readonly string APPLICATION_FOLDER_PATH = Environment.CurrentDirectory;
+        public static readonly string APPLICATION_EXE_PATH = Environment.ProcessPath;
+
+        private static Mutex mutex;
+
 
         internal static bool isEnabled = false;
 
@@ -31,12 +29,22 @@ namespace Nightwrap
         [STAThread]
         static void Main()
         {
+            bool isCreatedNew;
+            Mutex mutex = new(true, NAME, out isCreatedNew);
+
+            if (!isCreatedNew)
+            {
+                return;
+            }
+
             ApplicationConfiguration.Initialize();
             InitializeTrayIcon();
             saverTimer.Tick += new EventHandler(OnTimerTick);
             interceptKeys.Begin();
             interceptMouse.Begin();
             Application.Run(guiForm);
+
+            GC.KeepAlive(mutex);
         }
 
         private static void InitializeTrayIcon()
@@ -48,7 +56,7 @@ namespace Nightwrap
             trayIcon.ContextMenuStrip.Items.Add("Exit", null, KillTheProcess);
             trayIcon.Visible = true;
             trayIcon.Click += new EventHandler(ShowGUI);
-        } 
+        }
 
         public static void EnableSaver()
         {
@@ -96,8 +104,8 @@ namespace Nightwrap
 
         public static void SetTimer(int timer) => saverTimer.Set(timer);
         public static void ResetTimer() => saverTimer.Reset();
-        public static void EnableStartup()=>RegistryManager.EnableStartup();
-        public static void DisableStartup()=>RegistryManager.DisableStartup();
-        public static bool CheckIfInStartup()=>RegistryManager.CheckIfInStartup();
+        public static void EnableStartup() => RegistryManager.EnableStartup();
+        public static void DisableStartup() => RegistryManager.DisableStartup();
+        public static bool CheckIfInStartup() => RegistryManager.CheckIfInStartup();
     }
 }
