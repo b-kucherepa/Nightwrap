@@ -4,13 +4,13 @@ namespace Nightwrap
 {
     public partial class GUIForm : Form
     {
+        private const int MSECONDS_IN_SECOND = 1000;
         public GUIForm()
         {
             InitializeComponent();
             InitializeIcon();
             InitializeEvents();
-            checkBoxStartup.Checked = Program.CheckIfInStartup();
-            
+            RecoverSettings();
         }
 
         private void InitializeEvents()
@@ -18,7 +18,7 @@ namespace Nightwrap
             checkBoxEnable.CheckedChanged += OnEnableButtonClick;
             buttonClose.Click += OnCloseButtonClick;
             checkBoxStartup.CheckedChanged += OnStartupButtonClick;
-            numericTimer.ValueChanged += OnGUITimerValueChange;
+            numericTimer.ValueChanged += OnNumericTimerValueChange;
         }
 
         private void InitializeIcon()
@@ -27,9 +27,25 @@ namespace Nightwrap
             Icon = new Icon(Program.ICON_NAME);
         }
 
-            private void OnGUITimerValueChange(object? sender, EventArgs e)
+        private void RecoverSettings()
         {
-            Program.SetTimer((int)numericTimer.Value);
+            if (Program.StartupIsEnabled)
+            {
+                checkBoxStartup.Checked = true;
+                checkBoxEnable.Checked = true;
+                WindowState = FormWindowState.Minimized;
+            }
+            else
+            {
+                checkBoxStartup.Checked = false;
+            }
+
+            numericTimer.Value = Program.PopupInterval/MSECONDS_IN_SECOND;
+        }
+
+        private void OnNumericTimerValueChange(object? sender, EventArgs e)
+        {
+            Program.SetTimer((int)numericTimer.Value*MSECONDS_IN_SECOND);
         }
 
         private void OnCloseButtonClick(object? sender, EventArgs e)

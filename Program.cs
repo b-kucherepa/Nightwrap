@@ -1,3 +1,7 @@
+using System.Configuration;
+using System.Windows.Forms;
+using Timer = System.Windows.Forms.Timer;
+
 namespace Nightwrap
 {
     internal static class Program
@@ -7,20 +11,35 @@ namespace Nightwrap
         public static readonly string APPLICATION_FOLDER_PATH = Environment.CurrentDirectory;
         public static readonly string APPLICATION_EXE_PATH = Environment.ProcessPath;
 
-        private static Mutex mutex;
+        public static int PopupInterval
+        {
+            get => int.Parse(ConfigurationManager.AppSettings["interval"]);
+            set
+            {
+                var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
+                if (ConfigurationManager.AppSettings["interval"] is null)
+                    ConfigurationManager.AppSettings.Add("interval", value.ToString());
+                else
+                    ConfigurationManager.AppSettings["interval"] = value.ToString();
 
-        internal static bool isEnabled = false;
+                configFile.Save(ConfigurationSaveMode.Modified);
+            }
+        }
 
-        static readonly Form guiForm = new GUIForm();
-        static readonly Form saverForm = new ScreenSaverForm();
+        private static Mutex _mutex;
 
-        static readonly SaverTimer saverTimer = new();
+        private static bool _isEnabled = false;
 
-        static NotifyIcon trayIcon = new();
+        private static NotifyIcon _trayIcon = new();
 
-        static InterceptMouse interceptMouse = new();
-        static InterceptKeys interceptKeys = new();
+        private static readonly Timer _timer = new();
+
+        private static MouseInterceptor _mouseInterceptor = new();
+        private static KeyboardInterceptor _keyInterceptor = new();
+
+        private static readonly Form _guiForm = new GUIForm();
+        private static readonly Form _saverForm = new ScreenSaverForm();
 
 
         /// <summary>
@@ -29,50 +48,65 @@ namespace Nightwrap
         [STAThread]
         static void Main()
         {
-            bool isCreatedNew;
-            Mutex mutex = new(true, NAME, out isCreatedNew);
-
-            if (!isCreatedNew)
-            {
-                return;
-            }
-
             ApplicationConfiguration.Initialize();
-            InitializeTrayIcon();
-            saverTimer.Tick += new EventHandler(OnTimerTick);
-            interceptKeys.Begin();
-            interceptMouse.Begin();
-            Application.Run(guiForm);
 
-            GC.KeepAlive(mutex);
+            if (CheckIfAlreadyLaunched())
+                return;
+
+            InitializeTrayIcon();
+            InitializeTimer();
+            InitializeInputInterception();
+
+            Application.Run(_guiForm);
+        }
+
+        private static bool CheckIfAlreadyLaunched()
+        {
+            bool isCreatedNew;
+            _mutex = new Mutex(true, NAME, out isCreatedNew);
+
+            GC.KeepAlive(_mutex);
+
+            return !isCreatedNew;
         }
 
         private static void InitializeTrayIcon()
         {
-            trayIcon.Icon = new Icon(ICON_NAME);
-            trayIcon.Text = NAME;
-            trayIcon.ContextMenuStrip = new ContextMenuStrip();
-            trayIcon.ContextMenuStrip.Items.Add("Open", null, ShowGUI);
-            trayIcon.ContextMenuStrip.Items.Add("Exit", null, KillTheProcess);
-            trayIcon.Visible = true;
-            trayIcon.Click += new EventHandler(ShowGUI);
+            _trayIcon.Icon = new Icon(ICON_NAME);
+            _trayIcon.Text = NAME;
+            _trayIcon.ContextMenuStrip = new ContextMenuStrip();
+            _trayIcon.ContextMenuStrip.Items.Add("Open", null, ShowGUI);
+            _trayIcon.ContextMenuStrip.Items.Add("Exit", null, KillTheProcess);
+            _trayIcon.Visible = true;
+            _trayIcon.Click += new EventHandler(ShowGUI);
         }
 
+        private static void InitializeTimer()
+        {
+            _timer.Tick += new EventHandler(OnTimerTick);
+            _timer.Interval = PopupInterval;
+        }
+
+        private static void InitializeInputInterception()
+        {
+            _keyInterceptor.Begin();
+            _mouseInterceptor.Begin();
+        }
         public static void EnableSaver()
         {
-            isEnabled = true;
+            _isEnabled = true;
         }
 
         public static void DisableSaver()
         {
-            isEnabled = false;
+            _isEnabled = false;
         }
 
         internal static void PopSaver()
         {
-            if (isEnabled)
+            if (_isEnabled)
             {
-                saverForm.Show();
+                _saverForm.Show();
                 Cursor.Hide();
             }
         }
@@ -84,28 +118,35 @@ namespace Nightwrap
 
         static void ShowGUI(object? sender, EventArgs e)
         {
-            guiForm.Show();
+            _guiForm.Show();
             Cursor.Show();
         }
         public static void KillTheProcess()
         {
-            interceptKeys.End();
-            interceptMouse.End();
+            _keyInterceptor.End();
+            _mouseInterceptor.End();
             Application.Exit();
         }
 
         private static void KillTheProcess(object? sender, EventArgs e)
-
         {
-            interceptKeys.End();
-            interceptMouse.End();
+            _keyInterceptor.End();
+            _mouseInterceptor.End();
             Application.Exit();
         }
 
-        public static void SetTimer(int timer) => saverTimer.Set(timer);
-        public static void ResetTimer() => saverTimer.Reset();
-        public static void EnableStartup() => RegistryManager.EnableStartup();
-        public static void DisableStartup() => RegistryManager.DisableStartup();
-        public static bool CheckIfInStartup() => RegistryManager.CheckIfInStartup();
+        public static void SetTimer(int interval)
+        {
+            _timer.Interval = interval;
+            PopupInterval = interval;
+        }
+        public static void ResetTimer()
+        {
+            _timer.Stop();
+            _timer.Start();
+        }
+        public static void EnableStartup() => Startup.Enable();
+        public static void DisableStartup() => Startup.Disable();
+        public static bool StartupIsEnabled => Startup.CheckIfEnabled();
     }
 }

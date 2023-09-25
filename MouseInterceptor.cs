@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace Nightwrap
 {
-    class InterceptMouse
+    class MouseInterceptor
     {
         private static LowLevelMouseProc _proc = HookCallback;
         private static IntPtr _hookID = IntPtr.Zero;

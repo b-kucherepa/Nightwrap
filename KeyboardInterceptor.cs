@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace Nightwrap
 {
-    class InterceptKeys
+    class KeyboardInterceptor
     {
         private const int WH_KEYBOARD_LL = 13;
         private const int WM_KEYDOWN = 0x0100;
