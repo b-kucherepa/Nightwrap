@@ -10,13 +10,13 @@ namespace Nightwrap
             InitializeComponent();
             InitializeIcon();
             InitializeEvents();
-            RecoverSettings();
         }
 
         private void InitializeEvents()
         {
+            this.Shown += RecoverSettings;
             checkBoxEnable.CheckedChanged += OnEnableButtonClick;
-            buttonClose.Click += OnCloseButtonClick;
+            buttonClose.Click += Program.KillTheProcess;
             checkBoxStartup.CheckedChanged += OnStartupButtonClick;
             numericTimer.ValueChanged += OnNumericTimerValueChange;
         }
@@ -27,7 +27,7 @@ namespace Nightwrap
             Icon = new Icon(Program.ICON_NAME);
         }
 
-        private void RecoverSettings()
+        private void RecoverSettings(object? sender, EventArgs e)
         {
             if (Program.StartupIsEnabled)
             {
@@ -40,17 +40,12 @@ namespace Nightwrap
                 checkBoxStartup.Checked = false;
             }
 
-            numericTimer.Value = Program.PopupInterval/MSECONDS_IN_SECOND;
+            numericTimer.Value = Program.PopupInterval / MSECONDS_IN_SECOND;
         }
 
         private void OnNumericTimerValueChange(object? sender, EventArgs e)
         {
-            Program.SetTimer((int)numericTimer.Value*MSECONDS_IN_SECOND);
-        }
-
-        private void OnCloseButtonClick(object? sender, EventArgs e)
-        {
-            Program.KillTheProcess();
+            Program.PopupInterval = (int)(numericTimer.Value*MSECONDS_IN_SECOND);
         }
 
         private void OnEnableButtonClick(object? sender, EventArgs e)
