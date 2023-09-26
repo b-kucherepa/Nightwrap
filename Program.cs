@@ -24,8 +24,9 @@ namespace Nightwrap
 
         private static Mutex _mutex;
 
-        private static bool _isEnabled = false;
+        private static bool _isEnabled;
 
+        internal static bool IsEnabled { get => _isEnabled; private set => _isEnabled = value; }
         internal static int PopupInterval
         {
             get
@@ -104,17 +105,17 @@ namespace Nightwrap
         }
         internal static void EnableSaver()
         {
-            _isEnabled = true;
+            IsEnabled = true;
         }
 
         internal static void DisableSaver()
         {
-            _isEnabled = false;
+            IsEnabled = false;
         }
 
         internal static void PopSaver()
         {
-            if (_isEnabled)
+            if (IsEnabled)
             {
                 _saverForm.Show();
                 Cursor.Hide();
@@ -154,11 +155,13 @@ namespace Nightwrap
 
         private static void RestoreConfig()
         {
+            IsEnabled = Properties.Settings.Default.isEnabled;
             PopupInterval = Properties.Settings.Default.interval;
         }
 
         private static void SaveConfig()
         {
+            Properties.Settings.Default.isEnabled = IsEnabled;
             Properties.Settings.Default.interval = PopupInterval;
             Properties.Settings.Default.Save();
         }

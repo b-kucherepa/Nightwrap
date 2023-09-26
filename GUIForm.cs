@@ -32,12 +32,21 @@ namespace Nightwrap
             if (Program.StartupIsEnabled)
             {
                 checkBoxStartup.Checked = true;
-                checkBoxEnable.Checked = true;
-                WindowState = FormWindowState.Minimized;
+                Hide();
             }
             else
             {
                 checkBoxStartup.Checked = false;
+            }
+
+            if (Program.IsEnabled)
+            {
+                checkBoxEnable.Checked = true;
+                Program.EnableStartup();
+            }
+            else
+            {
+                checkBoxEnable.Checked = false;
             }
 
             numericTimer.Value = Program.PopupInterval / MSECONDS_IN_SECOND;

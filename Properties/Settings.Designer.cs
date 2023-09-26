@@ -34,5 +34,17 @@ namespace Nightwrap.Properties {
                 this["interval"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool isEnabled {
+            get {
+                return ((bool)(this["isEnabled"]));
+            }
+            set {
+                this["isEnabled"] = value;
+            }
+        }
     }
 }
