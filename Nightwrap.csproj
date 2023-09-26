@@ -14,7 +14,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Copyright>$Resource(LICENSE)</Copyright>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/morning-firebird/ReaderX.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/morning-firebird/Nightwrap.git</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
