@@ -45,7 +45,7 @@ namespace Nightwrap
 
         private void OnNumericTimerValueChange(object? sender, EventArgs e)
         {
-            Program.PopupInterval = (int)(numericTimer.Value*MSECONDS_IN_SECOND);
+            Program.PopupInterval = (int)(numericTimer.Value * MSECONDS_IN_SECOND);
         }
 
         private void OnEnableButtonClick(object? sender, EventArgs e)

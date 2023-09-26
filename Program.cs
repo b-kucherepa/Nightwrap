@@ -1,5 +1,4 @@
 using System.Configuration;
-using System.Windows.Forms;
 using Timer = System.Windows.Forms.Timer;
 
 namespace Nightwrap
@@ -71,8 +70,7 @@ namespace Nightwrap
 
         private static bool CheckIfAlreadyLaunched()
         {
-            bool isCreatedNew;
-            _mutex = new Mutex(true, NAME, out isCreatedNew);
+            _mutex = new Mutex(true, NAME, out bool isCreatedNew);
 
             GC.KeepAlive(_mutex);
 
@@ -156,47 +154,13 @@ namespace Nightwrap
 
         private static void RestoreConfig()
         {
-            string retrievedSetting = MINIMAL_INTERVAL.ToString();
-
-            try
-            {
-                retrievedSetting = ConfigurationManager.AppSettings["interval"];
-            }
-            catch 
-            {
-                //then leaves the initial value
-            }
-
-            int parseResult;
-            bool isParseSuccess = int.TryParse(retrievedSetting, out parseResult);
-            
-            if (isParseSuccess)
-                PopupInterval = parseResult;
-            else
-                PopupInterval = MINIMAL_INTERVAL;
+            PopupInterval = Properties.Settings.Default.interval;
         }
 
         private static void SaveConfig()
         {
-            try
-            {
-                Configuration configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-
-                if (configFile.AppSettings.Settings["interval"] is null)
-                {
-                    configFile.AppSettings.Settings.Add("interval", PopupInterval.ToString());
-                }
-                else
-                {
-                    configFile.AppSettings.Settings["interval"].Value = PopupInterval.ToString();
-                }
-                configFile.Save(ConfigurationSaveMode.Modified);
-                ConfigurationManager.RefreshSection("appSettings");
-            }
-            catch
-            {
-                //then does nothing
-            }
+            Properties.Settings.Default.interval = PopupInterval;
+            Properties.Settings.Default.Save();
         }
     }
 }

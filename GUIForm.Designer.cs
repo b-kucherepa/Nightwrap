@@ -41,9 +41,10 @@
             // 
             labelTimer.Font = new Font("Consolas", 9F, FontStyle.Regular, GraphicsUnit.Point);
             labelTimer.ForeColor = SystemColors.Control;
-            labelTimer.Location = new Point(12, 9);
+            labelTimer.Location = new Point(15, 11);
+            labelTimer.Margin = new Padding(4, 0, 4, 0);
             labelTimer.Name = "labelTimer";
-            labelTimer.Size = new Size(200, 18);
+            labelTimer.Size = new Size(250, 22);
             labelTimer.TabIndex = 0;
             labelTimer.Text = "Set the timer to (in s):";
             // 
@@ -51,9 +52,10 @@
             // 
             checkBoxEnable.Appearance = Appearance.Button;
             checkBoxEnable.Font = new Font("Consolas", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            checkBoxEnable.Location = new Point(218, 68);
+            checkBoxEnable.Location = new Point(272, 85);
+            checkBoxEnable.Margin = new Padding(4);
             checkBoxEnable.Name = "checkBoxEnable";
-            checkBoxEnable.Size = new Size(75, 28);
+            checkBoxEnable.Size = new Size(94, 35);
             checkBoxEnable.TabIndex = 1;
             checkBoxEnable.Text = "Start";
             checkBoxEnable.TextAlign = ContentAlignment.MiddleCenter;
@@ -63,48 +65,48 @@
             // 
             buttonClose.Font = new Font("Consolas", 9F, FontStyle.Regular, GraphicsUnit.Point);
             buttonClose.ForeColor = Color.Red;
-            buttonClose.Location = new Point(12, 68);
+            buttonClose.Location = new Point(15, 85);
+            buttonClose.Margin = new Padding(4);
             buttonClose.Name = "buttonClose";
-            buttonClose.Size = new Size(155, 29);
+            buttonClose.Size = new Size(194, 36);
             buttonClose.TabIndex = 2;
             buttonClose.Text = "Close the service";
             buttonClose.UseVisualStyleBackColor = true;
-            
             // 
             // checkBoxStartup
             // 
             checkBoxStartup.CheckAlign = ContentAlignment.MiddleRight;
             checkBoxStartup.Font = new Font("Consolas", 9F, FontStyle.Regular, GraphicsUnit.Point);
             checkBoxStartup.ForeColor = SystemColors.Control;
-            checkBoxStartup.Location = new Point(12, 40);
+            checkBoxStartup.Location = new Point(15, 50);
+            checkBoxStartup.Margin = new Padding(4);
             checkBoxStartup.Name = "checkBoxStartup";
-            checkBoxStartup.Size = new Size(221, 22);
+            checkBoxStartup.Size = new Size(276, 28);
             checkBoxStartup.TabIndex = 3;
             checkBoxStartup.Text = "Launch on OS startup:";
             checkBoxStartup.UseVisualStyleBackColor = true;
-            
             // 
             // numericTimer
             // 
             numericTimer.Font = new Font("Consolas", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            numericTimer.Increment = new decimal(new int[] { 30, 0, 0, 0 });
-            numericTimer.Location = new Point(218, 7);
-            numericTimer.Maximum = new decimal(new int[] { 7200, 0, 0, 0 });
+            numericTimer.Increment = new decimal(new int[] { 5, 0, 0, 0 });
+            numericTimer.Location = new Point(272, 9);
+            numericTimer.Margin = new Padding(4);
+            numericTimer.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
             numericTimer.Minimum = new decimal(new int[] { 5, 0, 0, 0 });
             numericTimer.Name = "numericTimer";
-            numericTimer.Size = new Size(75, 25);
+            numericTimer.Size = new Size(94, 25);
             numericTimer.TabIndex = 4;
             numericTimer.TextAlign = HorizontalAlignment.Right;
             numericTimer.ThousandsSeparator = true;
             numericTimer.Value = new decimal(new int[] { 60, 0, 0, 0 });
-            
             // 
             // GUIForm
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.MidnightBlue;
-            ClientSize = new Size(302, 113);
+            ClientSize = new Size(378, 141);
             Controls.Add(numericTimer);
             Controls.Add(checkBoxStartup);
             Controls.Add(buttonClose);
@@ -112,6 +114,7 @@
             Controls.Add(labelTimer);
             Icon = (Icon)resources.GetObject("$this.Icon");
             KeyPreview = true;
+            Margin = new Padding(4);
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "GUIForm";
