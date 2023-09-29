@@ -1,24 +1,37 @@
 ﻿/* Based on Stephen Toub's code from June 2006 MSDN Magazine Online. Thank you, Stephen!*/
+/*************************************************************************************************
+ * This class hooks Windows mouse input to prevent the screensaver popup 
+ * even then application is working in the background mode.
+ * It resets the timer upon detecting a mouse button click or movement.
+ * FOR DETAILED INFORMATION: check the KeyboardInterceptor class commentaries
+*************************************************************************************************/
+
 
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+
 
 namespace Nightwrap
 {
     class MouseInterceptor
     {
+        private const int WH_MOUSE_LL = 14;
+
         private static LowLevelMouseProc _proc = HookCallback;
         private static IntPtr _hookID = IntPtr.Zero;
+
 
         internal void Begin()
         {
             _hookID = SetHook(_proc);
         }
 
+
         internal void End()
         {
             UnhookWindowsHookEx(_hookID);
         }
+
 
         private static IntPtr SetHook(LowLevelMouseProc proc)
         {
@@ -30,58 +43,32 @@ namespace Nightwrap
             }
         }
 
+
         private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
 
         private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            //if (nCode >= 0 && MouseMessages.WM_LBUTTONDOWN == (MouseMessages)wParam)
-            if (nCode >= 0 && (int)wParam!= 0x0200)
+            if (nCode >= 0 && (int)wParam != 0x0200)
             {
-                //MSLLHOOKSTRUCT hookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
-                //Debug.WriteLine(hookStruct.pt.x + ", " + hookStruct.pt.y);
                 Program.ResetTimer();
             }
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
 
-        private const int WH_MOUSE_LL = 14;
 
-        /*private enum MouseMessages
-        {
-            WM_LBUTTONDOWN = 0x0201,
-            WM_LBUTTONUP = 0x0202,
-            WM_MOUSEMOVE = 0x0200,
-            WM_MOUSEWHEEL = 0x020A,
-            WM_RBUTTONDOWN = 0x0204,
-            WM_RBUTTONUP = 0x0205
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct POINT
-        {
-            public int x;
-            public int y;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct MSLLHOOKSTRUCT
-        {
-            public POINT pt;
-            public uint mouseData;
-            public uint flags;
-            public uint time;
-            public IntPtr dwExtraInfo;
-        }*/
+        /*Attaching Windows dlls required:*/
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelMouseProc lpfn, IntPtr hMod, uint dwThreadId);
+        private static extern IntPtr SetWindowsHookEx(int idHook,
+            LowLevelMouseProc lpfn, IntPtr hMod, uint dwThreadId);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool UnhookWindowsHookEx(IntPtr hhk);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+        private static extern IntPtr CallNextHookEx(IntPtr hhk,
+            int nCode, IntPtr wParam, IntPtr lParam);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern IntPtr GetModuleHandle(string lpModuleName);
