@@ -1,10 +1,4 @@
 ﻿/* Based on Stephen Toub's code from June 2006 MSDN Magazine Online. Thank you, Stephen!*/
-/*************************************************************************************************
- * This class hooks Windows mouse input to prevent the screensaver popup 
- * even then application is working in the background mode.
- * It resets the timer upon detecting a mouse button click or movement.
- * FOR DETAILED INFORMATION: check the KeyboardInterceptor class commentaries
-*************************************************************************************************/
 
 
 using System.Diagnostics;
@@ -13,6 +7,11 @@ using System.Runtime.InteropServices;
 
 namespace Nightwrap
 {
+    /// <summary>
+    /// Hooks Windows mouse input to prevent the screensaver popup 
+    /// even then application is working in the background mode.
+    /// It resets the timer upon detecting a mouse button click or movement.
+    /// </summary>
     class MouseInterceptor
     {
         private const int WH_MOUSE_LL = 14;
@@ -32,7 +31,6 @@ namespace Nightwrap
             UnhookWindowsHookEx(_hookID);
         }
 
-
         private static IntPtr SetHook(LowLevelMouseProc proc)
         {
             using (Process curProcess = Process.GetCurrentProcess())
@@ -46,6 +44,9 @@ namespace Nightwrap
 
         private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
 
+        /// <summary>
+        /// Registers the input and calls the popup timer reset method
+        /// </summary>
         private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
             if (nCode >= 0 && (int)wParam != 0x0200)

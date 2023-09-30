@@ -1,14 +1,20 @@
 /*********************************************************************************************
- * The main class of the application. It's both the entry point and a control point.
- * Such design was dictated by the small size of the app. Excluding the control functionality
- * to a separate class would increase the sofrware complexity. 
- * And this software has nothing to be added... except some screensaver customization maybe?
+ * 
 *********************************************************************************************/
 
+using System.Security.Policy;
 using Timer = System.Windows.Forms.Timer;
 
 namespace Nightwrap
 {
+    /// <summary>
+    /// The main class of the application. It's both the entry point and a control point.
+    /// </summary>
+    /// <remarks>
+    /// Such design was dictated by the small size of the app.Excluding the control functionality
+    /// to a separate class would increase the sofrware complexity.
+    /// And this software has nothing to be added... except some screensaver customization maybe?
+    /// </remarks>
     internal static class Program
     {
         internal const string NAME = "Nightwrap";
@@ -33,10 +39,14 @@ namespace Nightwrap
         private static bool _isEnabled;
 
 
-        /* A property which incapsulates if the main popup mechanics is enabled currently.
-         * This property has dismantled "Enable" and "Disable" methods from before.
-         * That has simplified the access therefore lowering the complexity 
-         * but feels a bit wrong: */
+        /// <summary>
+        /// Shows if the main popup mechanics is enabled currently.
+        /// </summary>
+        /// <remarks>
+        /// This property has dismantled "Enable" and "Disable" methods from before.
+        /// That has simplified the access therefore lowering the complexity 
+        /// but feels a bit wrong
+        /// </remarks>
         internal static bool SaverIsEnabled
         {
             get => _isEnabled;
@@ -44,8 +54,14 @@ namespace Nightwrap
         }
 
 
-        /* Same is true for this property covering the program startup on launch state.
-         * Also it feels too complicated for a thing as simple as property: */
+        /// <summary>
+        /// Incapsulates methods returning the application startup on launch current state.
+        /// </summary>
+        /// <remarks>
+        /// This property has dismantled "Enable" and "Disable" methods from before.
+        /// That has simplified the access therefore lowering the complexity 
+        /// but feels a bit wrong
+        /// </remarks>
         internal static bool StartupIsEnabled
         { 
             get => Startup.CheckIfEnabled(); 
@@ -63,8 +79,9 @@ namespace Nightwrap
         }
 
 
-        /* A property which incapsulastes the timer popup interval.
-         * A bit complicated thing too: */
+        /// <summary>
+        /// A property which incapsulastes the timer popup interval.
+        /// </summary>
         internal static int PopupInterval
         {
             get => _timer.Interval;
@@ -90,7 +107,7 @@ namespace Nightwrap
         {
             ApplicationConfiguration.Initialize();
 
-            //Closes the new application instance if another instance was detected:
+            //closes the new application instance if another instance was detected:
             if (CheckIfAlreadyLaunched())
                 return;
 
@@ -104,7 +121,13 @@ namespace Nightwrap
             Application.Run(_guiForm);
         }
 
-        /* Close the application (for real. Check the GUIForm "OnClosingForm" method): */
+
+        /// <summary>
+        /// Closes the application
+        /// </summary>
+        /// <remarks>
+        /// (for real. Check the GUIForm "OnClosingForm" method)
+        /// </remarks>
         internal static void KillTheProcess(object? sender, EventArgs e)
         {
             SaveConfig();
@@ -114,14 +137,20 @@ namespace Nightwrap
         }
 
 
-        /* Resets popup timer: */
+
+        /// <summary>
+        /// Resets popup timer
+        /// </summary>
         internal static void ResetTimer()
         {
             _timer.Stop();
             _timer.Start();
         }
 
-        /* Creates mutex to figure if it's the first instance of the application or not: */
+
+        /// <summary>
+        /// Creates mutex to figure if it's the first instance of the application or not
+        /// </summary>
         private static bool CheckIfAlreadyLaunched()
         {
             _mutex = new Mutex(true, NAME, out bool isCreatedNew);
@@ -132,7 +161,6 @@ namespace Nightwrap
         }
 
 
-        /* Initializes forms: */
         private static void InitializeForms()
         {
             _guiForm = new GUIForm();
@@ -140,7 +168,9 @@ namespace Nightwrap
         }
 
 
-        /* Initializes system tray icon: */
+        /// <summary>
+        /// Initializes system tray icon
+        /// </summary>
         private static void InitializeTrayIcon()
         {
             _trayIcon = new NotifyIcon();
@@ -154,7 +184,9 @@ namespace Nightwrap
         }
 
 
-        /* Initializes popup timer: */
+        /// <summary>
+        /// Initializes popup timer
+        /// </summary>
         private static void InitializeTimer()
         {
             _timer = new Timer();
@@ -162,7 +194,9 @@ namespace Nightwrap
         }
 
 
-        /* Initializes input interception to prevent the screensaver from appearing: */
+        /// <summary>
+        /// Initializes input interception to prevent the screensaver from appearing
+        /// </summary>
         private static void InitializeInputInterception()
         {
             _mouseInterceptor = new MouseInterceptor();
@@ -172,7 +206,9 @@ namespace Nightwrap
         }
 
 
-        /* Reads settings from a automatically generated application configuration file: */
+        /// <summary>
+        /// Reads settings from a automatically generated application configuration file
+        /// </summary>
         private static void RestoreConfig()
         {
             SaverIsEnabled = Properties.Settings.Default.isEnabled;
@@ -180,7 +216,9 @@ namespace Nightwrap
         }
 
 
-        /* Saves settings in a automatically generated application configuration file: */
+        /// <summary>
+        /// Saves settings in a automatically generated application configuration file
+        /// </summary>
         private static void SaveConfig()
         {
             Properties.Settings.Default.isEnabled = SaverIsEnabled;
@@ -189,7 +227,9 @@ namespace Nightwrap
         }
 
 
-        /* Shows GUI window: */
+        /// <summary>
+        /// Shows GUI window
+        /// </summary>
         private static void ShowGUI(object? sender, EventArgs e)
         {
             _guiForm.Show();
@@ -197,7 +237,9 @@ namespace Nightwrap
         }
 
 
-        /* Popups the screensaver on a timer tick event: */
+        /// <summary>
+        /// Popups the screensaver on a timer tick event
+        /// </summary>
         private static void OnTimerTickPopSaver(object? sender, EventArgs e)
         {
             if (SaverIsEnabled)

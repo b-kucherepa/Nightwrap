@@ -1,10 +1,11 @@
-﻿/*************************************************************************************************
- * This is the manually created counterpart of the designer-generated class part.
- * This part contains code for "waking up" (removing the black popup screensaver)
-*************************************************************************************************/
+﻿using System.ComponentModel;
 
 namespace Nightwrap
 {
+
+    /// <summary>
+    /// This Form contains code for "waking up" (removing the black popup screensaver)
+    /// </summary>
     public partial class ScreenSaverForm : Form
     {
         public ScreenSaverForm()
@@ -14,7 +15,9 @@ namespace Nightwrap
         }
 
 
-        /*Subscribes on input events which are "waking it up":*/
+        /// <summary>
+        /// Subscribes on input events which are "waking it up"
+        /// </summary>
         private void InitializeEvents()
         {
             KeyDown += new KeyEventHandler(OnSaverFormInput);
@@ -22,7 +25,9 @@ namespace Nightwrap
         }
 
 
-        /*Hides itself on any input*/
+        /// <summary>
+        /// Hides the form itself on any input
+        /// </summary>
         private void OnSaverFormInput(object? sender, EventArgs e)
         {
             Cursor.Show();

@@ -1,14 +1,16 @@
-﻿/*************************************************************************************************
- * This is the manually created counterpart of the designer-generated class part.
- * This part contains methods related to the settings GUI functioning.
- * The part sends input to the main Program class and restores some initial values from it.
-*************************************************************************************************/
-
+﻿using IWshRuntimeLibrary;
+using Microsoft.VisualBasic;
 using System.ComponentModel;
+using System.Xml.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 
 namespace Nightwrap
 {
+    /// <summary>
+    ///  The Form class which contains methods related to the settings GUI functioning.
+    ///  Sends input to the main Program class and restores some initial values from it.
+    /// </summary>
     public partial class GUIForm : Form
     {
         private const int MSECONDS_IN_SECOND = 1000; //used to convert NumUpDown seconds
@@ -22,7 +24,9 @@ namespace Nightwrap
         }
 
 
-        /*Subscribes on interface elements interaction events:*/
+        /// <summary>
+        ///  Subscribes on interface elements interaction events
+        /// </summary>
         private void InitializeEvents()
         {
             this.Shown += RecoverSettings;
@@ -33,7 +37,9 @@ namespace Nightwrap
         }
 
 
-        /*Initializes icon for the window bar, and its tray icon:*/
+        /// <summary>
+        /// Initializes icon for the window bar, and its tray icon
+        /// </summary>
         private void InitializeWindowIcon()
         {
             Text = Program.NAME;
@@ -41,7 +47,9 @@ namespace Nightwrap
         }
 
 
-        /*Sets GUI elements according to the application settings:*/
+        /// <summary>
+        /// Sets GUI elements according to the application settings
+        /// </summary>
         private void RecoverSettings(object? sender, EventArgs e)
         {
             if (Program.StartupIsEnabled)
@@ -68,16 +76,18 @@ namespace Nightwrap
         }
 
 
-        /*Sets GUI elements according to the application settings:*/
-
+        /// <summary>
+        /// Sets GUI elements according to the application settings
+        /// </summary>
         private void OnNumericTimerValueChange(object? sender, EventArgs e)
         {
             Program.PopupInterval = (int)(numericTimer.Value * MSECONDS_IN_SECOND);
         }
 
 
-        /*Actions on screensaver popup enabling:*/
-
+        /// <summary>
+        /// Actions on screensaver popup enabling
+        /// </summary>
         private void OnEnableButtonClick(object? sender, EventArgs e)
         {
             if (checkBoxEnable.Checked)
@@ -93,8 +103,9 @@ namespace Nightwrap
         }
 
 
-        /*Actions on checking the "load on startup" checkbox:*/
-
+        /// <summary>
+        /// Actions on checking the "load on startup" checkbox
+        /// </summary>
         private void OnStartupButtonClick(object? sender, EventArgs e)
         {
             if (checkBoxStartup.Checked)
@@ -108,8 +119,10 @@ namespace Nightwrap
         }
 
 
-        /*Blocks the classic WinForm red cross form closing the application completely
-         * and just hides the window instead*/
+        /// <summary>
+        /// Blocks the classic WinForm red cross form closing the application completely
+        /// and just hides the window instead
+        /// </summary>
         private void OnClosingForm(object? sender, CancelEventArgs e)
         {
             e.Cancel = true;

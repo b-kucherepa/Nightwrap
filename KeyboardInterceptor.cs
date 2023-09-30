@@ -1,16 +1,18 @@
 ﻿/* Based on Stephen Toub's code from June 2006 MSDN Magazine Online. Thank you, Stephen!*/
-/*************************************************************************************************
- * This class hooks Windows keyboard input to prevent the screensaver popup 
- * even then application is working in the background mode.
- * It resets the timer upon detecting any key input.
-*************************************************************************************************/
+
 
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 
 namespace Nightwrap
 {
+    /// <summary>
+    /// Hooks Windows keyboard input to prevent the screensaver popup 
+    /// even then application is working in the background mode.
+    /// It resets the timer upon detecting any key input.
+    /// </summary>
     class KeyboardInterceptor
     {
         private const int WH_KEYBOARD_LL = 13;
@@ -21,21 +23,18 @@ namespace Nightwrap
         private static IntPtr _hookID = IntPtr.Zero;
 
 
-        /*An interface method to begin hooking:*/
         internal void Begin()
         {
             _hookID = SetHook(_proc);
         }
 
 
-        /*An interface method to end hooking:*/
         internal void End()
         {
             UnhookWindowsHookEx(_hookID);
         }
 
 
-        /*Installs the hook:*/
         private static IntPtr SetHook(LowLevelKeyboardProc proc)
         {
             using (Process curProcess = Process.GetCurrentProcess())
@@ -47,12 +46,13 @@ namespace Nightwrap
         }
 
 
-        /*?Creates delegate for a pointer thus isolating the "unsafe" code?*/
         private delegate IntPtr LowLevelKeyboardProc(int nCode,
             IntPtr wParam, IntPtr lParam);
 
 
-        /*Registers the input and calls the popup timer reset method:*/
+        /// <summary>
+        /// Registers the input and calls the popup timer reset method
+        /// </summary>
         private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
             if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)

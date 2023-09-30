@@ -1,15 +1,22 @@
 ﻿/*************************************************************************************************
- * This class manages the application startup on Windows system loading 
- * and contains such methods as including regisry operation or  
- * creating the startup shortcut file in the Windows Start up folder.
+
 *************************************************************************************************/
 
 using IWshRuntimeLibrary;
 using Microsoft.Win32;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Windows.Forms;
 using static System.Environment;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Nightwrap
 {
+    /// <summary>
+    /// Manages the application startup on Windows system loading
+    /// and contains such methods as including regisry operation or
+    /// creating the startup shortcut file in the Windows Start up folder.
+    /// </summary>
     static internal class Startup
     {
         private const string REGISTRY_PATH = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
@@ -19,7 +26,12 @@ namespace Nightwrap
             + "\\" + Program.NAME + SHORTCUT_EXTENSION;
 
 
-        /* Checks if the application added to the Windows Startup by checking the registry: */
+        /// <summary>
+        /// Checks if the application added to the Windows Startup by checking the registry
+        /// </summary>
+        /// <returns>
+        /// Bool value if enabled or not
+        /// </returns>
         internal static bool CheckIfEnabled()
         {
             string registryValuePath = Registry.CurrentUser.Name + "\\" + REGISTRY_PATH;
@@ -27,8 +39,12 @@ namespace Nightwrap
         }
 
 
-        /* An interface method for enabling the application loading on startup.
-         * Add a key into register for working properly on older Windows systems: */
+        /// <summary>
+        /// Enables the application loading on startup.
+        /// </summary>
+        /// <remarks>
+        /// Adds a key into register for working properly on older Windows systems
+        /// </remarks>
         internal static void Enable()
         {
             using (RegistryKey? key = Registry.CurrentUser.OpenSubKey(REGISTRY_PATH, true))
@@ -40,7 +56,9 @@ namespace Nightwrap
         }
 
 
-        /* An interface method for disabling the application loading on startup: */
+        /// <summary>
+        /// Disables the application loading on startup
+        /// </summary>
         public static void Disable()
         {
             RemoveShortcut();
@@ -51,8 +69,12 @@ namespace Nightwrap
         }
 
 
-        /* Created the startup shortcut file in the Windows Start up folder.
-         * It's essential for proper functionality on Windows 11: */
+        /// <summary>
+        /// Creates the startup shortcut file in the Windows Start up folder.
+        /// </summary>
+        /// <remarks>
+        /// It's essential for proper startup functioning on Windows 11
+        /// </remarks>
         private static void CreateShortcut()
         {
             WshShell wsh = new();
@@ -69,7 +91,9 @@ namespace Nightwrap
         }
 
 
-        /* Removes the above-mentioned shortcut: */
+        /// <summary>
+        /// Removes the shortcut
+        /// </summary>
         private static void RemoveShortcut()
         {
             try
