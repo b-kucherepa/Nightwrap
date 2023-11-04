@@ -1,11 +1,4 @@
-﻿using IWshRuntimeLibrary;
-using Microsoft.VisualBasic;
-using System.ComponentModel;
-using System.Xml.Linq;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-
-
-namespace Nightwrap
+﻿namespace Nightwrap
 {
     /// <summary>
     ///  The Form class which contains methods related to the settings GUI functioning.
@@ -30,6 +23,7 @@ namespace Nightwrap
         private void InitializeEvents()
         {
             this.Shown += RecoverSettings;
+            this.FormClosing += OnClosingForm;
             checkBoxEnable.CheckedChanged += OnEnableButtonClick;
             buttonClose.Click += Program.KillTheProcess;
             checkBoxStartup.CheckedChanged += OnStartupButtonClick;
@@ -65,7 +59,6 @@ namespace Nightwrap
             if (Program.SaverIsEnabled)
             {
                 checkBoxEnable.Checked = true;
-                Program.StartupIsEnabled = true;
             }
             else
             {
@@ -123,10 +116,13 @@ namespace Nightwrap
         /// Blocks the classic WinForm red cross form closing the application completely
         /// and just hides the window instead
         /// </summary>
-        private void OnClosingForm(object? sender, CancelEventArgs e)
+        private void OnClosingForm(object? sender, FormClosingEventArgs e)
         {
-            e.Cancel = true;
-            Hide();
+            if (e.CloseReason != CloseReason.ApplicationExitCall)
+            {
+                e.Cancel = true;
+                Hide();
+            }
         }
     }
 }

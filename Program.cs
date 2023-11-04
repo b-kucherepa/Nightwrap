@@ -1,8 +1,3 @@
-/*********************************************************************************************
- * 
-*********************************************************************************************/
-
-using System.Security.Policy;
 using Timer = System.Windows.Forms.Timer;
 
 namespace Nightwrap
@@ -38,6 +33,8 @@ namespace Nightwrap
 
         private static bool _isEnabled;
 
+        private static bool _startupIsEnabled;
+
 
         /// <summary>
         /// Shows if the main popup mechanics is enabled currently.
@@ -63,18 +60,19 @@ namespace Nightwrap
         /// but feels a bit wrong
         /// </remarks>
         internal static bool StartupIsEnabled
-        { 
-            get => Startup.CheckIfEnabled(); 
+        {
+            get => _startupIsEnabled;
             set
             {
-                if (value == true)
+                if (value)
                 {
                     Startup.Enable();
-                }    
-                else 
-                { 
+                }
+                else
+                {
                     Startup.Disable();
                 }
+                _startupIsEnabled = value;
             }
         }
 
@@ -97,7 +95,6 @@ namespace Nightwrap
                 }
             }
         }
-
 
         /// <summary>
         ///  The main entry point for the application.
@@ -135,7 +132,6 @@ namespace Nightwrap
             _mouseInterceptor.End();
             Application.Exit();
         }
-
 
 
         /// <summary>
@@ -211,8 +207,9 @@ namespace Nightwrap
         /// </summary>
         private static void RestoreConfig()
         {
-            SaverIsEnabled = Properties.Settings.Default.isEnabled;
             PopupInterval = Properties.Settings.Default.interval;
+            SaverIsEnabled = Properties.Settings.Default.isEnabled;
+            StartupIsEnabled = Properties.Settings.Default.launchOnStartup;
         }
 
 
@@ -221,8 +218,9 @@ namespace Nightwrap
         /// </summary>
         private static void SaveConfig()
         {
-            Properties.Settings.Default.isEnabled = SaverIsEnabled;
             Properties.Settings.Default.interval = PopupInterval;
+            Properties.Settings.Default.isEnabled = SaverIsEnabled;
+            Properties.Settings.Default.launchOnStartup = StartupIsEnabled;
             Properties.Settings.Default.Save();
         }
 

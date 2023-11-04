@@ -46,5 +46,17 @@ namespace Nightwrap.Properties {
                 this["isEnabled"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool launchOnStartup {
+            get {
+                return ((bool)(this["launchOnStartup"]));
+            }
+            set {
+                this["launchOnStartup"] = value;
+            }
+        }
     }
 }

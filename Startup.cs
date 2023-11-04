@@ -1,14 +1,6 @@
-﻿/*************************************************************************************************
-
-*************************************************************************************************/
-
-using IWshRuntimeLibrary;
+﻿using IWshRuntimeLibrary;
 using Microsoft.Win32;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows.Forms;
 using static System.Environment;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Nightwrap
 {
@@ -27,44 +19,39 @@ namespace Nightwrap
 
 
         /// <summary>
-        /// Checks if the application added to the Windows Startup by checking the registry
-        /// </summary>
-        /// <returns>
-        /// Bool value if enabled or not
-        /// </returns>
-        internal static bool CheckIfEnabled()
-        {
-            string registryValuePath = Registry.CurrentUser.Name + "\\" + REGISTRY_PATH;
-            return Registry.GetValue(registryValuePath, Program.NAME, null) is not null;
-        }
-
-
-        /// <summary>
         /// Enables the application loading on startup.
         /// </summary>
-        /// <remarks>
-        /// Adds a key into register for working properly on older Windows systems
-        /// </remarks>
         internal static void Enable()
         {
-            using (RegistryKey? key = Registry.CurrentUser.OpenSubKey(REGISTRY_PATH, true))
+            if (OSVersion.Version.Major >= 10)
             {
-                key.SetValue(Program.NAME, "\"" + Application.ExecutablePath + "\"");
+                CreateShortcut();
             }
-
-            CreateShortcut();
+            else
+            {
+                using (RegistryKey? key = Registry.CurrentUser.OpenSubKey(REGISTRY_PATH, true))
+                {
+                    key.SetValue(Program.NAME, "\"" + Application.ExecutablePath + "\"");
+                }
+            }
         }
 
 
         /// <summary>
-        /// Disables the application loading on startup
+        /// Disables the application loading on startup.
         /// </summary>
         public static void Disable()
         {
-            RemoveShortcut();
-            using (RegistryKey? key = Registry.CurrentUser.OpenSubKey(REGISTRY_PATH, true))
+            if (OSVersion.Version.Major >= 10)
             {
-                key.DeleteValue(Program.NAME, false);
+                RemoveShortcut();
+            }
+            else
+            {
+                using (RegistryKey? key = Registry.CurrentUser.OpenSubKey(REGISTRY_PATH, true))
+                {
+                    key.DeleteValue(Program.NAME, false);
+                }
             }
         }
 
@@ -73,7 +60,7 @@ namespace Nightwrap
         /// Creates the startup shortcut file in the Windows Start up folder.
         /// </summary>
         /// <remarks>
-        /// It's essential for proper startup functioning on Windows 11
+        /// It's essential for proper startup functioning on Windows 10+.
         /// </remarks>
         private static void CreateShortcut()
         {
@@ -92,7 +79,7 @@ namespace Nightwrap
 
 
         /// <summary>
-        /// Removes the shortcut
+        /// Removes the shortcut.
         /// </summary>
         private static void RemoveShortcut()
         {
